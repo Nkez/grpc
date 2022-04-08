@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+
+option go_package = "./pkg/proto";
+
+
+service UsersServer {
+  rpc CreateUser(User) returns (UserId) {}
+  rpc GetUserByEmail(Email) returns (User) {}
+  rpc GetAllUsers(google.protobuf.Empty) returns (Users) {}
+}
+
+message UserId{
+  string Id = 1;
+}
+
+message User{
+  string FirstName = 1;
+  string LastName = 2;
+  string Email = 3;
+  int64 Age = 4;
+}
+
+message Email{
+  string UserEmail = 1;
+}
+
+message Users {
+  repeated User List = 1;
+}
+

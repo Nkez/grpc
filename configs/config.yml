@@ -1,0 +1,12 @@
+db:
+  port: 5432
+  sslmode: disable
+  host:   localhost
+  username: postgres
+  dbname: postgres
+
+
+grpc:
+  port: 50082
+
+
