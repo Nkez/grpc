@@ -47,12 +47,35 @@ func (r *UsersPostgres) GetUserByEmail(ctx context.Context, email *proto.Email) 
 	return user, nil
 }
 
-func (r *UsersPostgres) GetAllUsers(ctx context.Context) ([]models.User, error) {
+func (r *UsersPostgres) SortUsersByStatusAndRegion(ctx context.Context, sort *proto.Sort) ([]models.User, error) {
 	var users []models.User
-	query := fmt.Sprintf(`SELECT * from users`)
-	err := r.db.Select(&users, query)
+	query := fmt.Sprintf(`select u.first_name, u.last_name, u.email, u.age, u.region , status  from  users u 
+									where u.status = $1 and u.region = $2`)
+	err := r.db.Select(&users, query, sort.Status, sort.Region)
 	if err != nil {
-		log.Error().Err(err).Msg("Err proto restaurant db")
+		log.Error().Err(err).Msg("Err user sort by status and region db")
+	}
+	return users, err
+}
+
+func (r *UsersPostgres) SortUsersByStatus(ctx context.Context, sort *proto.Sort) ([]models.User, error) {
+	var users []models.User
+	query := fmt.Sprintf(`select u.first_name, u.last_name, u.email, u.age, u.region , status  from  users u 
+									where u.status = $1`)
+	err := r.db.Select(&users, query, sort.Status)
+	if err != nil {
+		log.Error().Err(err).Msg("Err user sort by status db")
+	}
+	return users, err
+}
+
+func (r *UsersPostgres) SortUsersByRegion(ctx context.Context, sort *proto.Sort) ([]models.User, error) {
+	var users []models.User
+	query := fmt.Sprintf(`select u.first_name, u.last_name, u.email, u.age, u.region , status  from  users u 
+									where u.region = $1`)
+	err := r.db.Select(&users, query, sort.Region)
+	if err != nil {
+		log.Error().Err(err).Msg("Err user sort by status db")
 	}
 	return users, err
 }

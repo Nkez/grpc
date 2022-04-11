@@ -2,8 +2,10 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/Nkez/grpc/internal/repository"
+	"github.com/Nkez/grpc/models"
 	"github.com/Nkez/grpc/pkg/proto"
 	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog/log"
@@ -52,15 +54,25 @@ func (s *UsersService) GetUserByEmail(ctx context.Context, email *proto.Email) (
 }
 
 func (s *UsersService) GetAllUsers(ctx context.Context, sort *proto.Sort) (*proto.Users, error) {
-	users, err := s.repo.GetAllUsers(ctx)
+	var users []models.User
+	err := errors.New(" ")
+	if sort.Status != "" && sort.Region != "" {
+		users, err = s.repo.SortUsersByStatusAndRegion(ctx, sort)
+	}
+	if sort.Status != "" && sort.Region == "" {
+		users, err = s.repo.SortUsersByStatus(ctx, sort)
+	}
+
+	if sort.Status == "" && sort.Region != "" {
+		users, err = s.repo.SortUsersByRegion(ctx, sort)
+	}
 
 	protoUsers := make([]*proto.User, 0, len(users))
 	for _, val := range users {
 		protoUsers = append(protoUsers,
-			&proto.User{FirstName: val.FirstName, LastName: val.LastName, Email: val.Email, Age: val.Age})
+			&proto.User{FirstName: val.FirstName, LastName: val.LastName, Email: val.Email, Age: val.Age, Region: val.Region, Status: val.Status})
 	}
-	//return &proto.Users{List: protoUsers}, err
-	return nil, err
+	return &proto.Users{List: protoUsers}, err
 }
 
 func CheckStatus(status string) bool {
