@@ -50,7 +50,7 @@ func (s *UsersService) GetUserByEmail(ctx context.Context, email *proto.Email) (
 		log.Error().Err(err).Msg(fmt.Sprintf("User with email = %s not found", email.UserEmail))
 		return &proto.User{}, status.Error(400, fmt.Sprintf("User with email = %s not found", email.UserEmail))
 	}
-	return &proto.User{FirstName: user.FirstName, LastName: user.LastName, Email: user.Email, Age: user.Age}, err
+	return &proto.User{FirstName: user.FirstName, LastName: user.LastName, Email: user.Email, Age: user.Age, Region: user.Region, Status: user.Status}, err
 }
 
 func (s *UsersService) GetAllUsers(ctx context.Context, sort *proto.Sort) (*proto.Users, error) {
