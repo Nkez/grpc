@@ -8,8 +8,8 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"net/mail"
+	"strings"
 )
 
 type UsersService struct {
@@ -30,7 +30,13 @@ func (s *UsersService) CreateUser(ctx context.Context, user *proto.User) (*proto
 		log.Error().Err(err).Msg("invalid values of fields")
 		return &proto.UserId{}, status.Error(400, "invalid values of fields")
 	}
-
+	if CheckStatus(user.Status) == false {
+		return &proto.UserId{}, status.Error(400, "invalid status type")
+	}
+	if CheckRegion(user.Region) == false {
+		return &proto.UserId{}, status.Error(400, "invalid region")
+	}
+	user.Region = strings.ToUpper(user.Region)
 	id, _ := s.repo.CreateUser(ctx, user)
 	fmt.Println(id)
 	return &proto.UserId{Id: id}, nil
@@ -45,7 +51,7 @@ func (s *UsersService) GetUserByEmail(ctx context.Context, email *proto.Email) (
 	return &proto.User{FirstName: user.FirstName, LastName: user.LastName, Email: user.Email, Age: user.Age}, err
 }
 
-func (s *UsersService) GetAllUsers(ctx context.Context, empty *emptypb.Empty) (*proto.Users, error) {
+func (s *UsersService) GetAllUsers(ctx context.Context, sort *proto.Sort) (*proto.Users, error) {
 	users, err := s.repo.GetAllUsers(ctx)
 
 	protoUsers := make([]*proto.User, 0, len(users))
@@ -53,5 +59,22 @@ func (s *UsersService) GetAllUsers(ctx context.Context, empty *emptypb.Empty) (*
 		protoUsers = append(protoUsers,
 			&proto.User{FirstName: val.FirstName, LastName: val.LastName, Email: val.Email, Age: val.Age})
 	}
-	return &proto.Users{List: protoUsers}, err
+	//return &proto.Users{List: protoUsers}, err
+	return nil, err
+}
+
+func CheckStatus(status string) bool {
+	status = strings.ToLower(status)
+	switch status {
+	case "admin", "customer", "manager":
+		return true
+	}
+	return false
+}
+
+func CheckRegion(region string) bool {
+	if len(region) != 2 {
+		return false
+	}
+	return true
 }

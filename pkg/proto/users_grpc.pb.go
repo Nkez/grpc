@@ -11,7 +11,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -25,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type UsersServerClient interface {
 	CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*UserId, error)
 	GetUserByEmail(ctx context.Context, in *Email, opts ...grpc.CallOption) (*User, error)
-	GetAllUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Users, error)
+	GetAllUsers(ctx context.Context, in *Sort, opts ...grpc.CallOption) (*Users, error)
 }
 
 type usersServerClient struct {
@@ -54,7 +53,7 @@ func (c *usersServerClient) GetUserByEmail(ctx context.Context, in *Email, opts 
 	return out, nil
 }
 
-func (c *usersServerClient) GetAllUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Users, error) {
+func (c *usersServerClient) GetAllUsers(ctx context.Context, in *Sort, opts ...grpc.CallOption) (*Users, error) {
 	out := new(Users)
 	err := c.cc.Invoke(ctx, "/UsersServer/GetAllUsers", in, out, opts...)
 	if err != nil {
@@ -69,7 +68,7 @@ func (c *usersServerClient) GetAllUsers(ctx context.Context, in *emptypb.Empty, 
 type UsersServerServer interface {
 	CreateUser(context.Context, *User) (*UserId, error)
 	GetUserByEmail(context.Context, *Email) (*User, error)
-	GetAllUsers(context.Context, *emptypb.Empty) (*Users, error)
+	GetAllUsers(context.Context, *Sort) (*Users, error)
 	mustEmbedUnimplementedUsersServerServer()
 }
 
@@ -83,7 +82,7 @@ func (UnimplementedUsersServerServer) CreateUser(context.Context, *User) (*UserI
 func (UnimplementedUsersServerServer) GetUserByEmail(context.Context, *Email) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserByEmail not implemented")
 }
-func (UnimplementedUsersServerServer) GetAllUsers(context.Context, *emptypb.Empty) (*Users, error) {
+func (UnimplementedUsersServerServer) GetAllUsers(context.Context, *Sort) (*Users, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllUsers not implemented")
 }
 func (UnimplementedUsersServerServer) mustEmbedUnimplementedUsersServerServer() {}
@@ -136,7 +135,7 @@ func _UsersServer_GetUserByEmail_Handler(srv interface{}, ctx context.Context, d
 }
 
 func _UsersServer_GetAllUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(Sort)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -148,7 +147,7 @@ func _UsersServer_GetAllUsers_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/UsersServer/GetAllUsers",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServerServer).GetAllUsers(ctx, req.(*emptypb.Empty))
+		return srv.(UsersServerServer).GetAllUsers(ctx, req.(*Sort))
 	}
 	return interceptor(ctx, in, info, handler)
 }

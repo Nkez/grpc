@@ -4,13 +4,12 @@ import (
 	"context"
 	"github.com/Nkez/grpc/internal/repository"
 	"github.com/Nkez/grpc/pkg/proto"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type Users interface {
 	CreateUser(ctx context.Context, user *proto.User) (*proto.UserId, error)
 	GetUserByEmail(ctx context.Context, email *proto.Email) (*proto.User, error)
-	GetAllUsers(ctx context.Context, empty *emptypb.Empty) (*proto.Users, error)
+	GetAllUsers(ctx context.Context, sort *proto.Sort) (*proto.Users, error)
 }
 
 type Service struct {

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "google/protobuf/empty.proto";
+
 
 
 option go_package = "./pkg/proto";
@@ -9,7 +9,12 @@ option go_package = "./pkg/proto";
 service UsersServer {
   rpc CreateUser(User) returns (UserId) {}
   rpc GetUserByEmail(Email) returns (User) {}
-  rpc GetAllUsers(google.protobuf.Empty) returns (Users) {}
+  rpc GetAllUsers(Sort) returns (Users) {}
+}
+
+message Sort{
+  string Region = 1;
+  string Status = 2;
 }
 
 message UserId{
@@ -21,6 +26,8 @@ message User{
   string LastName = 2;
   string Email = 3;
   int64 Age = 4;
+  string Region = 5;
+  string Status = 6;
 }
 
 message Email{

@@ -20,8 +20,8 @@ func NewUsersPostgres(db *sqlx.DB) *UsersPostgres {
 
 func (r *UsersPostgres) CreateUser(ctx context.Context, user *proto.User) (string, error) {
 	id := ""
-	query := fmt.Sprintf("INSERT INTO users (first_name, last_name, email, age) VALUES ($1,$2,$3,$4) RETURNING id")
-	if err := r.db.QueryRow(query, user.FirstName, user.LastName, user.Email, user.Age).Scan(&id); err != nil {
+	query := fmt.Sprintf("INSERT INTO users (first_name, last_name, email, age, region, status) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id")
+	if err := r.db.QueryRow(query, user.FirstName, user.LastName, user.Email, user.Age, user.Region, user.Status).Scan(&id); err != nil {
 		log.Error().Err(err).Msg("")
 	}
 	return id, nil
